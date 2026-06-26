@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/svg+xml" href="logo.png">
+<title>Qrio — QR Code Generator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="page">
+
+    <!-- ============ NAVBAR ============ -->
+    <nav class="navbar">
+      <div class="brand">
+        <img src="logo.png" alt="Qrio" class="brand__logo">
+        <span class="brand__name">Qrio</span>
+      </div>
+      <div class="navlinks">
+        <a href="#generator" class="navlink">Generator</a>
+        <a href="#features" class="navlink">Features</a>
+        <a href="#faq" class="navlink">FAQ</a>
+      </div>
+      <a href="#generator" class="btn btn--primary btn--nav-cta">Generate QR</a>
+    </nav>
+
+    <!-- ============ HERO ============ -->
+    <section class="hero">
+      <h1>Create Beautiful QR Codes Instantly</h1>
+      <p>Generate, sesuaikan tampilan, dan unduh QR code profesional dalam hitungan detik — gratis, tanpa batas, tanpa akun.</p>
+    </section>
+
+    <!-- ============ GENERATOR ============ -->
+    <main class="layout" id="generator">
+
+      <!-- ===== KOLOM PREVIEW ===== -->
+      <section class="preview-col">
+        <div class="device-frame">
+          <div class="device-frame__bar"><span></span><span></span><span></span></div>
+          <div class="preview__canvas-wrap" id="canvasWrap">
+            <span class="bracket bracket--tl"></span>
+            <span class="bracket bracket--tr"></span>
+            <span class="bracket bracket--bl"></span>
+            <span class="bracket bracket--br"></span>
+            <canvas id="qrCanvas"></canvas>
+          </div>
+        </div>
+        <p class="preview__message" id="previewMessage">Pilih tipe QR dan isi kontennya untuk mulai.</p>
+
+        <div class="export-grid">
+          <button type="button" class="export-btn" id="downloadBtn">
+            <span class="export-btn__icon">⬇</span> PNG
+          </button>
+          <button type="button" class="export-btn" id="downloadSvgBtn">
+            <span class="export-btn__icon">⬇</span> SVG
+          </button>
+          <button type="button" class="export-btn" id="downloadPdfBtn">
+            <span class="export-btn__icon">📄</span> PDF
+          </button>
+          <button type="button" class="export-btn" id="copyImageBtn">
+            <span class="export-btn__icon">📋</span> Copy Image
+          </button>
+        </div>
+      </section>
+
+      <!-- ===== PANEL KONTROL ===== -->
+      <section class="panel">
+
+        <!-- TIPE QR -->
+        <div class="panel__section">
+          <span class="section-label">Pilih Tipe QR</span>
+          <div class="type-pills" id="typePills">
+            <button type="button" class="pill is-active" data-type="url">URL</button>
+            <button type="button" class="pill" data-type="pdf">PDF</button>
+            <button type="button" class="pill" data-type="wifi">WiFi</button>
+            <button type="button" class="pill" data-type="contact">Contact</button>
+            <button type="button" class="pill" data-type="email">Email</button>
+          </div>
+        </div>
+
+        <!-- KONTEN (dinamis sesuai tipe) -->
+        <div class="panel__section">
+          <span class="section-label">Konten</span>
+          <div id="contentFields"></div>
+          <span class="field__error" id="contentError"></span>
+        </div>
+
+        <!-- TAMPILAN -->
+        <div class="panel__section">
+          <span class="section-label">Tampilan</span>
+
+          <div class="field-row">
+            <div class="field field--color">
+              <label for="fgColor">Warna QR</label>
+              <input type="color" id="fgColor" value="#1a1a1a">
+            </div>
+            <div class="field field--color">
+              <label for="bgColor">Warna Latar</label>
+              <input type="color" id="bgColor" value="#ffffff">
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="sizeRange">Ukuran QR: <span id="sizeValue">280</span> px</label>
+            <input type="range" id="sizeRange" min="150" max="500" step="10" value="280">
+          </div>
+        </div>
+
+        <!-- PRESET STYLE -->
+        <div class="panel__section">
+          <span class="section-label">Preset Style</span>
+          <div class="preset-grid" id="presetGrid">
+            <button type="button" class="preset-btn is-active" data-preset="minimal">Minimal</button>
+            <button type="button" class="preset-btn" data-preset="modern">Modern</button>
+            <button type="button" class="preset-btn" data-preset="rounded">Rounded</button>
+            <button type="button" class="preset-btn" data-preset="premium">Premium</button>
+          </div>
+        </div>
+
+        <!-- LOGO & BADGE -->
+        <div class="panel__section">
+          <span class="section-label">Logo &amp; Badge</span>
+
+          <div class="field">
+            <label>Logo (opsional)</label>
+            <div class="logo-controls">
+              <label class="btn btn--secondary" for="logoInput">Unggah Logo</label>
+              <input type="file" id="logoInput" accept="image/png, image/jpeg" hidden>
+              <button type="button" class="btn btn--ghost" id="removeLogoBtn" disabled>Hapus Logo</button>
+            </div>
+            <span class="field__hint">Logo otomatis dibatasi agar tetap mudah dipindai.</span>
+          </div>
+
+          <div class="field" id="logoSizeField" hidden>
+            <label for="logoSizeRange">Ukuran Logo: <span id="logoSizeValue">22</span>%</label>
+            <input type="range" id="logoSizeRange" min="10" max="30" step="1" value="22">
+          </div>
+
+          <div class="field field--checkbox">
+            <label class="checkbox-label">
+              <input type="checkbox" id="docBadgeToggle">
+              Tambahkan badge ikon dokumen di pojok
+            </label>
+            <span class="field__hint">Cocok untuk QR tipe PDF/dokumen.</span>
+          </div>
+        </div>
+
+        <!-- RESET -->
+        <div class="panel__section panel__section--last">
+          <div class="actions">
+            <button type="button" class="btn btn--ghost" id="resetBtn">Reset Semua</button>
+          </div>
+        </div>
+
+      </section>
+
+    </main>
+
+    <!-- ============ FEATURES ============ -->
+    <section class="features" id="features">
+      <h2>Kenapa Pakai Qrio?</h2>
+      <div class="features__grid">
+        <div class="feature-card">
+          <div class="feature-card__icon">⚡</div>
+          <h3>Real-time &amp; Gratis</h3>
+          <p>QR langsung berubah saat kamu mengetik atau mengatur tampilan. Tidak ada batas pemakaian, tidak ada biaya tersembunyi.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card__icon">🎨</div>
+          <h3>Kustomisasi Penuh</h3>
+          <p>Atur warna, ukuran, logo di tengah, badge dokumen, hingga preset gaya siap pakai — Minimal, Modern, Rounded, atau Premium.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card__icon">🔒</div>
+          <h3>Privat &amp; Tanpa Akun</h3>
+          <p>Semua proses terjadi di browser kamu sendiri. Tidak perlu daftar, tidak ada data yang dikirim ke server mana pun.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card__icon">📁</div>
+          <h3>5 Tipe Konten</h3>
+          <p>Buat QR untuk link URL, dokumen PDF, WiFi, kontak (vCard), atau email — semuanya dari satu halaman.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card__icon">⬇</div>
+          <h3>4 Format Ekspor</h3>
+          <p>Unduh sebagai PNG, SVG (vektor, tajam di ukuran apa pun), PDF, atau langsung salin sebagai gambar.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card__icon">📱</div>
+          <h3>Tetap Terbaca</h3>
+          <p>Error correction level tinggi (H) memastikan QR tetap bisa dipindai walau ditambahkan logo di tengahnya.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ FAQ ============ -->
+    <section class="faq" id="faq">
+      <h2>Pertanyaan Umum</h2>
+      <div class="faq__list">
+        <details class="faq__item">
+          <summary>Apakah Qrio benar-benar gratis?</summary>
+          <p>Ya, sepenuhnya gratis dan tanpa batas penggunaan. Semua proses berjalan langsung di browser kamu, tidak ada server berbayar di baliknya.</p>
+        </details>
+        <details class="faq__item">
+          <summary>Apakah QR code-nya tetap bisa dipindai walau ada logo?</summary>
+          <p>Bisa. Qrio selalu memakai error correction level tinggi (H) dan membatasi ukuran logo secara otomatis agar keterbacaan QR tetap terjaga.</p>
+        </details>
+        <details class="faq__item">
+          <summary>Bisa buat QR untuk WiFi dan kontak juga?</summary>
+          <p>Bisa. Pilih tipe "WiFi" untuk membuat QR yang otomatis menyambungkan perangkat ke jaringan WiFi, atau "Contact" untuk membuat QR kartu nama digital (vCard).</p>
+        </details>
+        <details class="faq__item">
+          <summary>Format unduhan apa yang tersedia?</summary>
+          <p>PNG (gambar resolusi tinggi), SVG (vektor, tajam di ukuran berapa pun), PDF, dan opsi salin langsung sebagai gambar ke clipboard.</p>
+        </details>
+        <details class="faq__item">
+          <summary>Apakah data saya tersimpan di server?</summary>
+          <p>Tidak. Qrio adalah aplikasi statis yang berjalan sepenuhnya di browser kamu — tidak ada data yang dikirim atau disimpan di server mana pun.</p>
+        </details>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <p class="footer__slogan">Qrio — Scan Smarter, Share Faster.</p>
+      <p class="footer__credit">
+        Dibuat oleh <strong>Fradil</strong> ·
+        <a href="https://github.com/adiljayasentosa" target="_blank" rel="noopener noreferrer">GitHub</a>
+      </p>
+      <p class="footer__copyright">&copy; 2026 Qrio. Seluruh hak cipta dilindungi.</p>
+      <a href="https://saweria.co/adiljayasentosa" target="_blank" rel="noopener noreferrer" class="donate-btn">
+        ☕ Suka dengan Qrio? Traktir kopi lewat Saweria
+      </a>
+    </footer>
+
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
